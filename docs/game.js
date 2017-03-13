@@ -66,6 +66,15 @@ var GameMaster = (function () {
     };
     return GameMaster;
 }());
+var Player = (function () {
+    function Player() {
+        this.fund = 0;
+        this.progress = 0;
+        this.goal = 10;
+        this.cards = new Deck();
+    }
+    return Player;
+}());
 var Card = (function () {
     function Card(name, description) {
         this.name = name;
