@@ -1,4 +1,7 @@
 ﻿class GameMaster {
+
+// System Methods
+
     static WriteMessage(messageText: string): void {
         let newMessage = document.createElement("li");
         newMessage.innerText = messageText;
@@ -10,9 +13,14 @@
         }
     }
 
+// Initialization
+
     static start(): void {
         GameMaster.initializeUI();
+        GameMaster.initializeGame();
     }
+
+// Initialization::UI
 
     private static initializeUI(): void {
         GameMaster.gamePanel = document.getElementById("gameUI");
@@ -34,4 +42,13 @@
     private static playerPanels: HTMLElement;
     private static messagePanel: HTMLElement;
     private static messageOutput: HTMLElement;
+
+// Initialization::Game
+
+    private static initializeGame(): void {
+        GameMaster.unusedBackerCards = new Deck<BackerCard>();
+        GameMaster.unusedBackerCards.add(new OrdinaryFolk());
+    }
+
+    private static unusedBackerCards: Deck<BackerCard>;
 }
