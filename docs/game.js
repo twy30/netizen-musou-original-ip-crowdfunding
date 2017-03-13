@@ -12,10 +12,16 @@ var GameMaster = (function () {
     function GameMaster() {
     }
     GameMaster.start = function () {
-        alert("Hello, World!");
+        document.getElementById("game-div").innerText = "Hello, World!";
     };
     return GameMaster;
 }());
+var Card = (function () {
+    function Card() {
+    }
+    return Card;
+}());
+/// <reference path="Card.ts" />
 var ActionCard = (function (_super) {
     __extends(ActionCard, _super);
     function ActionCard() {
@@ -23,6 +29,7 @@ var ActionCard = (function (_super) {
     }
     return ActionCard;
 }(Card));
+/// <reference path="Card.ts" />
 var BackerCard = (function (_super) {
     __extends(BackerCard, _super);
     function BackerCard() {
@@ -30,11 +37,6 @@ var BackerCard = (function (_super) {
     }
     return BackerCard;
 }(Card));
-var Card = (function () {
-    function Card() {
-    }
-    return Card;
-}());
 var ItemCard = (function (_super) {
     __extends(ItemCard, _super);
     function ItemCard() {
@@ -42,3 +44,4 @@ var ItemCard = (function (_super) {
     }
     return ItemCard;
 }(Card));
+//# sourceMappingURL=game.js.map

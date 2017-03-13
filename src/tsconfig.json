@@ -1,9 +1,7 @@
 ﻿{
     "compilerOptions": {
-        "module": "commonjs",
         "target": "es5",
         "noImplicitAny": true,
-        "sourceMap": false,
-        "outFile": "../docs/game.js"
+        "sourceMap": true
     }
 }
