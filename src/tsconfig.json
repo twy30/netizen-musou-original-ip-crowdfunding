@@ -2,8 +2,8 @@
     "compilerOptions": {
         "module": "commonjs",
         "target": "es5",
-        "noImplicitAny": false,
+        "noImplicitAny": true,
         "sourceMap": false,
-        "outFile": "../docs/game-master.js"
+        "outFile": "../docs/game.js"
     }
 }
