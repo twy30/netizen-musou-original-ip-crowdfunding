@@ -11,8 +11,30 @@ var __extends = (this && this.__extends) || (function () {
 var GameMaster = (function () {
     function GameMaster() {
     }
+    GameMaster.WriteMessage = function (messageText) {
+        var newMessage = document.createElement("li");
+        newMessage.innerText = messageText;
+        var existingMessages = GameMaster.messageOutput.childNodes;
+        if (existingMessages.length <= 0) {
+            GameMaster.messageOutput.appendChild(newMessage);
+        }
+        else {
+            GameMaster.messageOutput.insertBefore(newMessage, existingMessages[0]);
+        }
+    };
     GameMaster.start = function () {
-        document.getElementById("game-div").innerText = "Hello, World!";
+        GameMaster.initializeUI();
+    };
+    GameMaster.initializeUI = function () {
+        GameMaster.gamePanel = document.getElementById("gameUI");
+        GameMaster.gameMasterPanel = document.createElement("div");
+        GameMaster.gamePanel.appendChild(GameMaster.gameMasterPanel);
+        GameMaster.playerPanels = document.createElement("div");
+        GameMaster.gamePanel.appendChild(GameMaster.playerPanels);
+        GameMaster.messagePanel = document.createElement("div");
+        GameMaster.gamePanel.appendChild(GameMaster.messagePanel);
+        GameMaster.messageOutput = document.createElement("ul");
+        GameMaster.messagePanel.appendChild(GameMaster.messageOutput);
     };
     return GameMaster;
 }());
