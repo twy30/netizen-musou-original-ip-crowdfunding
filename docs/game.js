@@ -110,6 +110,29 @@ var CertainReasons = (function (_super) {
     }
     return CertainReasons;
 }(ActionCard));
+var ExpandedScope = (function (_super) {
+    __extends(ExpandedScope, _super);
+    function ExpandedScope() {
+        return _super.call(this, "擴大規模", "給支持我們的人更多感動！", [
+            DiceFace.D1,
+            DiceFace.D2,
+        ]) || this;
+    }
+    return ExpandedScope;
+}(ActionCard));
+var LetterOfLaw = (function (_super) {
+    __extends(LetterOfLaw, _super);
+    function LetterOfLaw() {
+        return _super.call(this, "正當事業", "正當事業，絕對合法！", [
+            DiceFace.D1,
+            DiceFace.D2,
+            DiceFace.D3,
+            DiceFace.D4,
+            DiceFace.D5,
+        ]) || this;
+    }
+    return LetterOfLaw;
+}(ActionCard));
 var Fatso1 = (function (_super) {
     __extends(Fatso1, _super);
     function Fatso1() {
