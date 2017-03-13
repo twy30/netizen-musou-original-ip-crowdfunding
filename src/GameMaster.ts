@@ -1,5 +1,5 @@
 ﻿class GameMaster {
     static start() {
-        alert("Hello, World!");
+        document.getElementById("game-div").innerText = "Hello, World!";
     }
 }

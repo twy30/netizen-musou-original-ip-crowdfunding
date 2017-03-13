@@ -1,2 +1,4 @@
-﻿abstract class BackerCard extends Card {
+﻿/// <reference path="Card.ts" />
+
+abstract class BackerCard extends Card {
 }
