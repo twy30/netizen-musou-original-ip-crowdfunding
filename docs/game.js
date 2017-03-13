@@ -51,8 +51,18 @@ var GameMaster = (function () {
     };
     // Initialization::Game
     GameMaster.initializeGame = function () {
+        GameMaster.unusedActionCards = new Deck();
+        GameMaster.unusedActionCards.add(new CertainReasons());
+        GameMaster.unusedActionCards.add(new ExpandedScope());
+        GameMaster.unusedActionCards.add(new LetterOfLaw());
         GameMaster.unusedBackerCards = new Deck();
+        GameMaster.unusedBackerCards.add(new Fatso1());
+        GameMaster.unusedBackerCards.add(new HotChick());
         GameMaster.unusedBackerCards.add(new OrdinaryFolk());
+        GameMaster.unusedItemCards = new Deck();
+        GameMaster.unusedItemCards.add(new Encyclopedia());
+        GameMaster.unusedItemCards.add(new EyeDrop());
+        GameMaster.unusedItemCards.add(new MicroMovie());
     };
     return GameMaster;
 }());

@@ -46,9 +46,23 @@
 // Initialization::Game
 
     private static initializeGame(): void {
+        GameMaster.unusedActionCards = new Deck<ActionCard>();
+        GameMaster.unusedActionCards.add(new CertainReasons());
+        GameMaster.unusedActionCards.add(new ExpandedScope());
+        GameMaster.unusedActionCards.add(new LetterOfLaw());
+
         GameMaster.unusedBackerCards = new Deck<BackerCard>();
+        GameMaster.unusedBackerCards.add(new Fatso1());
+        GameMaster.unusedBackerCards.add(new HotChick());
         GameMaster.unusedBackerCards.add(new OrdinaryFolk());
+
+        GameMaster.unusedItemCards = new Deck<ItemCard>();
+        GameMaster.unusedItemCards.add(new Encyclopedia());
+        GameMaster.unusedItemCards.add(new EyeDrop());
+        GameMaster.unusedItemCards.add(new MicroMovie());
     }
 
+    private static unusedActionCards: Deck<ActionCard>;
     private static unusedBackerCards: Deck<BackerCard>;
+    private static unusedItemCards: Deck<ItemCard>;
 }
