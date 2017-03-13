@@ -94,8 +94,10 @@ var DiceFace;
 })(DiceFace || (DiceFace = {}));
 var ItemCard = (function (_super) {
     __extends(ItemCard, _super);
-    function ItemCard() {
-        return _super !== null && _super.apply(this, arguments) || this;
+    function ItemCard(name, description, cost) {
+        var _this = _super.call(this, name, description) || this;
+        _this.cost = cost;
+        return _this;
     }
     return ItemCard;
 }(Card));
@@ -167,4 +169,25 @@ var OrdinaryFolk = (function (_super) {
     }
     return OrdinaryFolk;
 }(BackerCard));
+var Encyclopedia = (function (_super) {
+    __extends(Encyclopedia, _super);
+    function Encyclopedia() {
+        return _super.call(this, "設定集", "這有一個龐大的世界觀", 400) || this;
+    }
+    return Encyclopedia;
+}(ItemCard));
+var EyeDrop = (function (_super) {
+    __extends(EyeDrop, _super);
+    function EyeDrop() {
+        return _super.call(this, "眼藥水", "你看到他講到都哭了…", 100) || this;
+    }
+    return EyeDrop;
+}(ItemCard));
+var MicroMovie = (function (_super) {
+    __extends(MicroMovie, _super);
+    function MicroMovie() {
+        return _super.call(this, "微電影", "我的一個夢想…", 300) || this;
+    }
+    return MicroMovie;
+}(ItemCard));
 //# sourceMappingURL=game.js.map
