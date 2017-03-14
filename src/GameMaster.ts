@@ -49,7 +49,7 @@
         for (let i = 5; i > 0; --i) { this.addToNewBackerCards(new OrdinaryFolk()); }
 
         this.players = [];
-        for (let i = 0; i < 1; ++i) { this.players.push(new Player(i, `玩家${i}`)); }
+        for (let i = 0; i < 1; ++i) { this.players.push(new Player(i, `玩家#${i}`)); }
 
         this.availableBackerCards = new Deck();
         this.drawFromNewBackerCardsThenAddToAvailableBackerCards();
@@ -75,19 +75,23 @@
         this.listBackers();
 
         if (this.players[0].progress >= this.players[0].goal) {
+            this.WriteMessage("");
             this.WriteMessage("★☆★☆★☆★★☆★☆★☆★");
             this.WriteMessage("☆★☆★☆★☆☆★☆★☆★☆");
             this.WriteMessage("★☆★☆★☆★★☆★☆★☆★");
             this.WriteMessage("☆★☆★☆★☆☆★☆★☆★☆");
             this.WriteMessage("進度完成，遊戲結束");
             this.WriteMessage(`最後成績：現金 ${this.players[0].fund} 萬，進度 ${this.players[0].progress}/${this.players[0].goal} = ${Math.round(this.players[0].progress*100/this.players[0].goal)}%`);
+            this.listBackers2();
         } else if (this.availableBackerCards.cardCount <= 0) {
+            this.WriteMessage("");
             this.WriteMessage("╳✕╳✕╳✕╳");
             this.WriteMessage("✕╳✕╳✕╳✕");
             this.WriteMessage("╳✕╳✕╳✕╳");
             this.WriteMessage("✕╳✕╳✕╳✕");
             this.WriteMessage("萬人響應，零人到場，遊戲結束");
             this.WriteMessage(`最後成績：現金 ${this.players[0].fund} 萬，進度 ${this.players[0].progress}/${this.players[0].goal} = ${Math.round(this.players[0].progress*100/this.players[0].goal)}%`);
+            this.listBackers2();
         }
     }
 
@@ -105,6 +109,24 @@
             for(let df of (<BackerCard>card).savingThrows) { savingThrowString += this.getDiceFace(df); }
 
             let cardEntry = `【${card.name}；${card.description}】 ${savingThrowString} [現金+＄${(<BackerCard>card).fund}萬] [進度+${(<BackerCard>card).progress}] ｛點此擲骰向這位投資人募款｝`;
+            cardNode.textContent = cardEntry;
+            this.gameMasterOutput.appendChild(cardNode);
+        }
+    }
+
+    private listBackers2(): void {
+        this.gameMasterPanel.firstChild.firstChild.textContent = `目前有 ${this.availableBackerCards.cardCount} 位投資人（潛在投資人卡池中還剩 ${this.newBackerCards.cardCount} 人)。`;
+        while (this.gameMasterOutput.firstChild !== null) {
+            this.gameMasterOutput.removeChild(this.gameMasterOutput.firstChild);
+        }
+        for (let card of this.availableBackerCards.cards) {
+            let cardNode = document.createElement("li");
+            cardNode.style.fontFamily = "monospace";
+
+            let savingThrowString = "";
+            for(let df of (<BackerCard>card).savingThrows) { savingThrowString += this.getDiceFace(df); }
+
+            let cardEntry = `【${card.name}；${card.description}】 ${savingThrowString} [現金+＄${(<BackerCard>card).fund}萬] [進度+${(<BackerCard>card).progress}]`;
             cardNode.textContent = cardEntry;
             this.gameMasterOutput.appendChild(cardNode);
         }
@@ -153,7 +175,7 @@
             let savingThrowString = "";
             for(let df of (<BackerCard>card).savingThrows) { savingThrowString += this.getDiceFace(df); }
 
-            let cardEntry = `【${card.name}；${card.description}】 ${savingThrowString} [現金+＄${(<BackerCard>card).fund}萬] [進度+${(<BackerCard>card).progress}]`;
+            let cardEntry = `{募款成功} 【${card.name}；${card.description}】 ${savingThrowString} [現金+＄${(<BackerCard>card).fund}萬] [進度+${(<BackerCard>card).progress}]`;
             cardNode.textContent = cardEntry;
             this.playerOutputs[0].appendChild(cardNode);
 
@@ -163,7 +185,7 @@
 
         this.players[0].fund = playerFund;
         this.players[0].progress = playerProgress;
-        this.playerPanel.firstChild.firstChild.textContent = `${this.players[0].name} 目前資金 ${this.players[0].fund} 進度 ${this.players[0].progress}/${this.players[0].goal}`;
+        this.playerPanel.firstChild.firstChild.textContent = `${this.players[0].name} 目前 [資金 ${this.players[0].fund} 萬] [進度 ${this.players[0].progress}/${this.players[0].goal} ]`;
     }
 
     private getDiceFace(diceFace: DiceFace): string {
