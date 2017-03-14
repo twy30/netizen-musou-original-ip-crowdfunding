@@ -19,8 +19,9 @@
 
     static start(): void {
         GameMaster._intance = new GameMaster();
+        GameMaster.instance.initializeSystemUI();
         GameMaster.instance.initializeGame();
-        GameMaster.instance.initializeUI();
+        GameMaster.instance.initializePlayerUI();
     }
 
     static get instance(): GameMaster { return GameMaster._intance; }
@@ -39,25 +40,31 @@
         this.newCards.add(new MicroMovie());
 
         this.newBackerCards = new Deck();
-        for (let i = 2; i > 0; --i) { this.newBackerCards.add(new Fatso1()); }
-        for (let i = 2; i > 0; --i) { this.newBackerCards.add(new Fatso2()); }
-        for (let i = 2; i > 0; --i) { this.newBackerCards.add(new Fatso3()); }
-        for (let i = 9; i > 0; --i) { this.newBackerCards.add(new Groupie()); }
-        for (let i = 2; i > 0; --i) { this.newBackerCards.add(new HotChick()); }
-        for (let i = 2; i > 0; --i) { this.newBackerCards.add(new OnePercent()); }
-        for (let i = 5; i > 0; --i) { this.newBackerCards.add(new OrdinaryFolk()); }
+        for (let i = 2; i > 0; --i) { this.addToNewBackerCards(new Fatso1()); }
+        for (let i = 2; i > 0; --i) { this.addToNewBackerCards(new Fatso2()); }
+        for (let i = 2; i > 0; --i) { this.addToNewBackerCards(new Fatso3()); }
+        for (let i = 9; i > 0; --i) { this.addToNewBackerCards(new Groupie()); }
+        for (let i = 2; i > 0; --i) { this.addToNewBackerCards(new HotChick()); }
+        for (let i = 2; i > 0; --i) { this.addToNewBackerCards(new OnePercent()); }
+        for (let i = 5; i > 0; --i) { this.addToNewBackerCards(new OrdinaryFolk()); }
 
         this.players = [];
-        for (let i = 0; i < 2; ++i) { this.players.push(new Player(i, `Player${i}`)); }
+        for (let i = 0; i < 2; ++i) { this.players.push(new Player(i, `玩家${i}`)); }
+    }
+
+    private addToNewBackerCards(card: Card): void {
+        this.WriteMessage(`ＧＭ將 ${card.name} 加入卡池。`);
+        this.newBackerCards.add(card);
     }
 
     private newCards: Deck;
     private newBackerCards: Deck;
     private players: Player[];
+    private availableBackerCards: Deck;
 
-// Initialization, UI
+// Initialization, System UI
 
-    private initializeUI(): void {
+    private initializeSystemUI(): void {
         this.gamePanel = document.getElementById("gameUI");
 
         this.gameMasterPanel = document.createElement("div");
@@ -67,18 +74,6 @@
         this.gameMasterOutput = document.createElement("ul");
         gameInfoPanel.appendChild(this.gameMasterOutput);
         this.gameMasterPanel.appendChild(gameInfoPanel);
-
-        this.playerPanel = document.createElement("div");
-        this.gamePanel.appendChild(this.playerPanel);
-        this.playerOutputs = [];
-        for (let i = 0; i < this.players.length; ++i) {
-            let playerInfoPanel = document.createElement("div");
-            playerInfoPanel.appendChild(document.createTextNode(this.players[i].name))
-            let playerOutput = document.createElement("ul");
-            playerInfoPanel.appendChild(playerOutput);
-            this.playerOutputs.push(playerOutput);
-            this.playerPanel.appendChild(playerInfoPanel);
-        }
 
         this.messagePanel = document.createElement("div");
         this.gamePanel.appendChild(this.messagePanel);
@@ -91,10 +86,26 @@
     
     private gameMasterPanel: HTMLElement;
     private gameMasterOutput: HTMLElement;
-    
-    private playerPanel: HTMLElement;
-    private playerOutputs: HTMLElement[];
-    
+
     private messagePanel: HTMLElement;
     private messageOutput: HTMLElement;
+
+// Initialization, Player UI
+
+    private initializePlayerUI(): void {
+        this.playerPanel = document.createElement("div");
+        this.gamePanel.insertBefore(this.playerPanel, this.gamePanel.lastChild);
+        this.playerOutputs = [];
+        for (let i = 0; i < this.players.length; ++i) {
+            let playerInfoPanel = document.createElement("div");
+            playerInfoPanel.appendChild(document.createTextNode(this.players[i].name))
+            let playerOutput = document.createElement("ul");
+            playerInfoPanel.appendChild(playerOutput);
+            this.playerOutputs.push(playerOutput);
+            this.playerPanel.appendChild(playerInfoPanel);
+        }
+    }
+
+    private playerPanel: HTMLElement;
+    private playerOutputs: HTMLElement[];
 }
