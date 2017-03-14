@@ -10,7 +10,9 @@
                 DiceFace.D4,
                 DiceFace.D5,
                 DiceFace.D6,
-            ]
+            ],
+            300,
+            2
         );
     }
 }

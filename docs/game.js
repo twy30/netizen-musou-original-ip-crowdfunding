@@ -16,15 +16,24 @@ var Deck = (function () {
         this.cards.push(card);
     };
     Deck.prototype.draw = function () {
-        if (this.isEmpty()) {
+        if (this.isEmpty) {
             throw new Error("drawing from an empty deck");
         }
-        var index = this.cards.length * Math.random();
+        var index = Math.floor(this.cards.length * Math.random());
         var ret = this.cards[index];
         this.cards.splice(index, 1);
         return ret;
     };
-    Deck.prototype.isEmpty = function () { return this.cards.length <= 0; };
+    Object.defineProperty(Deck.prototype, "isEmpty", {
+        get: function () { return this.cards.length <= 0; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Deck.prototype, "cardCount", {
+        get: function () { return this.cards.length; },
+        enumerable: true,
+        configurable: true
+    });
     return Deck;
 }());
 var DiceFace;
@@ -96,13 +105,135 @@ var GameMaster = (function () {
             this.addToNewBackerCards(new OrdinaryFolk());
         }
         this.players = [];
-        for (var i = 0; i < 2; ++i) {
+        for (var i = 0; i < 1; ++i) {
             this.players.push(new Player(i, "\u73A9\u5BB6" + i));
         }
+        this.availableBackerCards = new Deck();
+        this.drawFromNewBackerCardsThenAddToAvailableBackerCards();
     };
     GameMaster.prototype.addToNewBackerCards = function (card) {
-        this.WriteMessage("\uFF27\uFF2D\u5C07 " + card.name + " \u52A0\u5165\u5361\u6C60\u3002");
         this.newBackerCards.add(card);
+        this.WriteMessage("\uFF27\uFF2D\u7121\u4E2D\u751F\u6709\u8B8A\u51FA\u4E00\u5F35\u3010" + card.name + "\u3011\uFF0C\u52A0\u5165\u6F5B\u5728\u6295\u8CC7\u4EBA\u5361\u6C60\u3002");
+    };
+    GameMaster.prototype.drawFromNewBackerCardsThenAddToAvailableBackerCards = function () {
+        var expectedAvailableBackerCardCount = 5;
+        while (this.availableBackerCards.cardCount < expectedAvailableBackerCardCount) {
+            if (this.newBackerCards.isEmpty) {
+                break;
+            }
+            else {
+                var newCard = this.newBackerCards.draw();
+                this.availableBackerCards.add(newCard);
+                this.WriteMessage("\uFF27\uFF2D\u5F9E\u6F5B\u5728\u6295\u8CC7\u4EBA\u5361\u6C60\u4E2D\u62BD\u51FA\u3010" + newCard.name + "\u3011\u52A0\u5165\u6295\u8CC7\u4EBA\u5340\u3002");
+            }
+        }
+        this.listBackers();
+        if (this.players[0].progress >= this.players[0].goal) {
+            this.WriteMessage("★☆★☆★☆★★☆★☆★☆★");
+            this.WriteMessage("☆★☆★☆★☆☆★☆★☆★☆");
+            this.WriteMessage("★☆★☆★☆★★☆★☆★☆★");
+            this.WriteMessage("☆★☆★☆★☆☆★☆★☆★☆");
+            this.WriteMessage("進度完成，遊戲結束");
+            this.WriteMessage("\u6700\u5F8C\u6210\u7E3E\uFF1A\u73FE\u91D1 " + this.players[0].fund + " \u842C\uFF0C\u9032\u5EA6 " + this.players[0].progress + "/" + this.players[0].goal + " = " + Math.round(this.players[0].progress * 100 / this.players[0].goal) + "%");
+        }
+        else if (this.availableBackerCards.cardCount <= 0) {
+            this.WriteMessage("╳✕╳✕╳✕╳");
+            this.WriteMessage("✕╳✕╳✕╳✕");
+            this.WriteMessage("╳✕╳✕╳✕╳");
+            this.WriteMessage("✕╳✕╳✕╳✕");
+            this.WriteMessage("萬人響應，零人到場，遊戲結束");
+            this.WriteMessage("\u6700\u5F8C\u6210\u7E3E\uFF1A\u73FE\u91D1 " + this.players[0].fund + " \u842C\uFF0C\u9032\u5EA6 " + this.players[0].progress + "/" + this.players[0].goal + " = " + Math.round(this.players[0].progress * 100 / this.players[0].goal) + "%");
+        }
+    };
+    GameMaster.prototype.listBackers = function () {
+        this.gameMasterPanel.firstChild.firstChild.textContent = "\u76EE\u524D\u6709 " + this.availableBackerCards.cardCount + " \u4F4D\u6295\u8CC7\u4EBA\uFF08\u6F5B\u5728\u6295\u8CC7\u4EBA\u5361\u6C60\u4E2D\u9084\u5269 " + this.newBackerCards.cardCount + " \u4EBA)\u3002";
+        while (this.gameMasterOutput.firstChild !== null) {
+            this.gameMasterOutput.removeChild(this.gameMasterOutput.firstChild);
+        }
+        var _loop_1 = function (card) {
+            var cardNode = document.createElement("li");
+            cardNode.style.fontFamily = "monospace";
+            cardNode.addEventListener("click", function () { GameMaster.instance.pitch(card); });
+            var savingThrowString = "";
+            for (var _i = 0, _a = card.savingThrows; _i < _a.length; _i++) {
+                var df = _a[_i];
+                savingThrowString += this_1.getDiceFace(df);
+            }
+            var cardEntry = "\u3010" + card.name + "\uFF1B" + card.description + "\u3011 " + savingThrowString + " [\u73FE\u91D1+\uFF04" + card.fund + "\u842C] [\u9032\u5EA6+" + card.progress + "] \uFF5B\u9EDE\u6B64\u64F2\u9AB0\u5411\u9019\u4F4D\u6295\u8CC7\u4EBA\u52DF\u6B3E\uFF5D";
+            cardNode.textContent = cardEntry;
+            this_1.gameMasterOutput.appendChild(cardNode);
+        };
+        var this_1 = this;
+        for (var _i = 0, _a = this.availableBackerCards.cards; _i < _a.length; _i++) {
+            var card = _a[_i];
+            _loop_1(card);
+        }
+    };
+    GameMaster.prototype.pitch = function (card) {
+        var diceRoll = (Math.floor(Math.random() * 6) + 1);
+        var fundingSuccessful = card.savingThrows.indexOf(diceRoll) > -1;
+        this.WriteMessage("");
+        var message = "\u4F60\u5C0D\u3010" + card.name + "\u3011\u64F2\u51FA " + this.getDiceFace(diceRoll) + " \uFF0C";
+        if (fundingSuccessful) {
+            message += "[\u73FE\u91D1+\uFF04" + card.fund + "\u842C] [\u9032\u5EA6+" + card.progress + "]";
+            this.WriteMessage(message);
+            var indexToRemove = this.availableBackerCards.cards.indexOf(card);
+            this.availableBackerCards.cards.splice(indexToRemove, 1);
+            this.players[0].cards.add(card);
+            this.WriteMessage("\uFF27\uFF2D\u5C07\u3010" + card.name + "\u3011\u81EA \u6295\u8CC7\u4EBA\u5340 \u79FB\u5230\u4F60\u7684 \u6210\u529F\u52DF\u8CC7\u5340 \u3002");
+            this.drawPlayerInfo();
+        }
+        else {
+            message += "募款失敗。";
+            this.WriteMessage(message);
+            var indexToRemove = this.availableBackerCards.cards.indexOf(card);
+            this.availableBackerCards.cards.splice(indexToRemove, 1);
+            this.WriteMessage("\uFF27\uFF2D\u5C07\u3010" + card.name + "\u3011\u81EA \u6295\u8CC7\u4EBA\u5340 \u79FB\u5230 \u5EE2\u724C\u5340 \u3002");
+        }
+        this.drawFromNewBackerCardsThenAddToAvailableBackerCards();
+    };
+    GameMaster.prototype.drawPlayerInfo = function () {
+        while (this.playerOutputs[0].firstChild !== null) {
+            this.playerOutputs[0].removeChild(this.playerOutputs[0].firstChild);
+        }
+        var playerFund = 0;
+        var playerProgress = 0;
+        for (var _i = 0, _a = this.players[0].cards.cards; _i < _a.length; _i++) {
+            var card = _a[_i];
+            var cardNode = document.createElement("li");
+            cardNode.style.fontFamily = "monospace";
+            var savingThrowString = "";
+            for (var _b = 0, _c = card.savingThrows; _b < _c.length; _b++) {
+                var df = _c[_b];
+                savingThrowString += this.getDiceFace(df);
+            }
+            var cardEntry = "\u3010" + card.name + "\uFF1B" + card.description + "\u3011 " + savingThrowString + " [\u73FE\u91D1+\uFF04" + card.fund + "\u842C] [\u9032\u5EA6+" + card.progress + "]";
+            cardNode.textContent = cardEntry;
+            this.playerOutputs[0].appendChild(cardNode);
+            playerFund += card.fund;
+            playerProgress += card.progress;
+        }
+        this.players[0].fund = playerFund;
+        this.players[0].progress = playerProgress;
+        this.playerPanel.firstChild.firstChild.textContent = this.players[0].name + " \u76EE\u524D\u8CC7\u91D1 " + this.players[0].fund + " \u9032\u5EA6 " + this.players[0].progress + "/" + this.players[0].goal;
+    };
+    GameMaster.prototype.getDiceFace = function (diceFace) {
+        switch (diceFace) {
+            case DiceFace.D1:
+                return "\u2680";
+            case DiceFace.D2:
+                return "\u2681";
+            case DiceFace.D3:
+                return "\u2682";
+            case DiceFace.D4:
+                return "\u2683";
+            case DiceFace.D5:
+                return "\u2684";
+            case DiceFace.D6:
+                return "\u2685";
+            default:
+                throw new Error("unknown diceFace: " + diceFace);
+        }
     };
     // Initialization, System UI
     GameMaster.prototype.initializeSystemUI = function () {
@@ -168,9 +299,11 @@ var ActionCard = (function (_super) {
 /// <reference path="Card.ts" />
 var BackerCard = (function (_super) {
     __extends(BackerCard, _super);
-    function BackerCard(name, description, savingThrows) {
+    function BackerCard(name, description, savingThrows, fund, progress) {
         var _this = _super.call(this, name, description) || this;
         _this.savingThrows = savingThrows;
+        _this.fund = fund;
+        _this.progress = progress;
         return _this;
     }
     return BackerCard;
@@ -227,7 +360,7 @@ var Fatso1 = (function (_super) {
             DiceFace.D3,
             DiceFace.D4,
             DiceFace.D5,
-        ]) || this;
+        ], 300, 3) || this;
     }
     return Fatso1;
 }(BackerCard));
@@ -240,7 +373,7 @@ var Fatso2 = (function (_super) {
             DiceFace.D3,
             DiceFace.D4,
             DiceFace.D5,
-        ]) || this;
+        ], 50, 0) || this;
     }
     return Fatso2;
 }(BackerCard));
@@ -254,7 +387,7 @@ var Fatso3 = (function (_super) {
             DiceFace.D4,
             DiceFace.D5,
             DiceFace.D6,
-        ]) || this;
+        ], 300, 2) || this;
     }
     return Fatso3;
 }(BackerCard));
@@ -267,7 +400,7 @@ var Groupie = (function (_super) {
             DiceFace.D3,
             DiceFace.D4,
             DiceFace.D5,
-        ]) || this;
+        ], 50, 0) || this;
     }
     return Groupie;
 }(BackerCard));
@@ -277,7 +410,7 @@ var HotChick = (function (_super) {
         return _super.call(this, "正妹", "聞起來香香der", [
             DiceFace.D1,
             DiceFace.D2,
-        ]) || this;
+        ], 100, 1) || this;
     }
     return HotChick;
 }(BackerCard));
@@ -286,7 +419,7 @@ var OnePercent = (function (_super) {
     function OnePercent() {
         return _super.call(this, "有錢人", "別讓有錢人不開心", [
             DiceFace.D1,
-        ]) || this;
+        ], 1500, 2) || this;
     }
     return OnePercent;
 }(BackerCard));
@@ -297,7 +430,7 @@ var OrdinaryFolk = (function (_super) {
             DiceFace.D1,
             DiceFace.D2,
             DiceFace.D3,
-        ]) || this;
+        ], 300, 1) || this;
     }
     return OrdinaryFolk;
 }(BackerCard));
