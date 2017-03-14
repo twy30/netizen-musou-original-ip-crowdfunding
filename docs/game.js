@@ -185,6 +185,46 @@ var Fatso1 = (function (_super) {
     }
     return Fatso1;
 }(BackerCard));
+var Fatso2 = (function (_super) {
+    __extends(Fatso2, _super);
+    function Fatso2() {
+        return _super.call(this, "肥宅二號", "再刷一單就好……", [
+            DiceFace.D1,
+            DiceFace.D2,
+            DiceFace.D3,
+            DiceFace.D4,
+            DiceFace.D5,
+        ]) || this;
+    }
+    return Fatso2;
+}(BackerCard));
+var Fatso3 = (function (_super) {
+    __extends(Fatso3, _super);
+    function Fatso3() {
+        return _super.call(this, "肥宅三號", "肥宅沒人愛 ＱＱ", [
+            DiceFace.D1,
+            DiceFace.D2,
+            DiceFace.D3,
+            DiceFace.D4,
+            DiceFace.D5,
+            DiceFace.D6,
+        ]) || this;
+    }
+    return Fatso3;
+}(BackerCard));
+var Groupie = (function (_super) {
+    __extends(Groupie, _super);
+    function Groupie() {
+        return _super.call(this, "粉粉", "Ｏ大加油！", [
+            DiceFace.D1,
+            DiceFace.D2,
+            DiceFace.D3,
+            DiceFace.D4,
+            DiceFace.D5,
+        ]) || this;
+    }
+    return Groupie;
+}(BackerCard));
 var HotChick = (function (_super) {
     __extends(HotChick, _super);
     function HotChick() {
@@ -194,6 +234,15 @@ var HotChick = (function (_super) {
         ]) || this;
     }
     return HotChick;
+}(BackerCard));
+var OnePercent = (function (_super) {
+    __extends(OnePercent, _super);
+    function OnePercent() {
+        return _super.call(this, "有錢人", "別讓有錢人不開心", [
+            DiceFace.D1,
+        ]) || this;
+    }
+    return OnePercent;
 }(BackerCard));
 var OrdinaryFolk = (function (_super) {
     __extends(OrdinaryFolk, _super);
