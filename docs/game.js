@@ -40,10 +40,10 @@ var GameMaster = (function () {
     function GameMaster() {
     }
     // Public Methods
-    GameMaster.prototype.WriteMessage = function (messageText, sourceName) {
+    GameMaster.prototype.WriteMessage = function (messageText) {
         var newMessage = document.createElement("li");
         newMessage.style.fontFamily = "monospace";
-        newMessage.innerText = "[" + new Date().toISOString() + "][" + sourceName + "]: " + messageText;
+        newMessage.innerText = "[" + new Date().toISOString() + "] " + messageText;
         var existingMessages = this.messageOutput.childNodes;
         if (existingMessages.length <= 0) {
             this.messageOutput.appendChild(newMessage);
@@ -55,26 +55,14 @@ var GameMaster = (function () {
     // Initialization
     GameMaster.start = function () {
         GameMaster._intance = new GameMaster();
-        GameMaster.instance.initializeUI();
         GameMaster.instance.initializeGame();
+        GameMaster.instance.initializeUI();
     };
     Object.defineProperty(GameMaster, "instance", {
         get: function () { return GameMaster._intance; },
         enumerable: true,
         configurable: true
     });
-    // Initialization, UI
-    GameMaster.prototype.initializeUI = function () {
-        this.gamePanel = document.getElementById("gameUI");
-        this.gameMasterPanel = document.createElement("div");
-        this.gamePanel.appendChild(this.gameMasterPanel);
-        this.playerPanels = document.createElement("div");
-        this.gamePanel.appendChild(this.playerPanels);
-        this.messagePanel = document.createElement("div");
-        this.gamePanel.appendChild(this.messagePanel);
-        this.messageOutput = document.createElement("ul");
-        this.messagePanel.appendChild(this.messageOutput);
-    };
     // Initialization, Game
     GameMaster.prototype.initializeGame = function () {
         this.newCards = new Deck();
@@ -85,20 +73,70 @@ var GameMaster = (function () {
         this.newCards.add(new EyeDrop());
         this.newCards.add(new MicroMovie());
         this.newBackerCards = new Deck();
-        this.newBackerCards.add(new Fatso1());
-        this.newBackerCards.add(new HotChick());
-        this.newBackerCards.add(new OrdinaryFolk());
-        this.players = [new Player("Player1"), new Player("Player2")];
+        for (var i = 2; i > 0; --i) {
+            this.newBackerCards.add(new Fatso1());
+        }
+        for (var i = 2; i > 0; --i) {
+            this.newBackerCards.add(new Fatso2());
+        }
+        for (var i = 2; i > 0; --i) {
+            this.newBackerCards.add(new Fatso3());
+        }
+        for (var i = 9; i > 0; --i) {
+            this.newBackerCards.add(new Groupie());
+        }
+        for (var i = 2; i > 0; --i) {
+            this.newBackerCards.add(new HotChick());
+        }
+        for (var i = 2; i > 0; --i) {
+            this.newBackerCards.add(new OnePercent());
+        }
+        for (var i = 5; i > 0; --i) {
+            this.newBackerCards.add(new OrdinaryFolk());
+        }
+        this.players = [];
+        for (var i = 0; i < 2; ++i) {
+            this.players.push(new Player(i, "Player" + i));
+        }
+    };
+    // Initialization, UI
+    GameMaster.prototype.initializeUI = function () {
+        this.gamePanel = document.getElementById("gameUI");
+        this.gameMasterPanel = document.createElement("div");
+        this.gamePanel.appendChild(this.gameMasterPanel);
+        var gameInfoPanel = document.createElement("div");
+        gameInfoPanel.appendChild(document.createTextNode("潛在投資人："));
+        this.gameMasterOutput = document.createElement("ul");
+        gameInfoPanel.appendChild(this.gameMasterOutput);
+        this.gameMasterPanel.appendChild(gameInfoPanel);
+        this.playerPanel = document.createElement("div");
+        this.gamePanel.appendChild(this.playerPanel);
+        this.playerOutputs = [];
+        for (var i = 0; i < this.players.length; ++i) {
+            var playerInfoPanel = document.createElement("div");
+            playerInfoPanel.appendChild(document.createTextNode(this.players[i].name));
+            var playerOutput = document.createElement("ul");
+            playerInfoPanel.appendChild(playerOutput);
+            this.playerOutputs.push(playerOutput);
+            this.playerPanel.appendChild(playerInfoPanel);
+        }
+        this.messagePanel = document.createElement("div");
+        this.gamePanel.appendChild(this.messagePanel);
+        this.messagePanel.appendChild(document.createTextNode("系統訊息："));
+        this.messageOutput = document.createElement("ul");
+        this.messagePanel.appendChild(this.messageOutput);
     };
     return GameMaster;
 }());
 var Player = (function () {
-    function Player(name) {
+    function Player(id, name) {
+        this.id = id;
         this.name = name;
         this.fund = 0;
         this.progress = 0;
         this.goal = 10;
         this.cards = new Deck();
+        this.backerCards = new Deck();
     }
     return Player;
 }());

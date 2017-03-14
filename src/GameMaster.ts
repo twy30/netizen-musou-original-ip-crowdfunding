@@ -3,10 +3,10 @@
 
 // Public Methods
 
-    WriteMessage(messageText: string, sourceName: string): void {
+    WriteMessage(messageText: string): void {
         let newMessage = document.createElement("li");
         newMessage.style.fontFamily = "monospace";
-        newMessage.innerText = `[${new Date().toISOString()}][${sourceName}]: ${messageText}`;
+        newMessage.innerText = `[${new Date().toISOString()}] ${messageText}`;
         let existingMessages = this.messageOutput.childNodes;
         if (existingMessages.length <= 0) {
             this.messageOutput.appendChild(newMessage);
@@ -19,36 +19,13 @@
 
     static start(): void {
         GameMaster._intance = new GameMaster();
-        GameMaster.instance.initializeUI();
         GameMaster.instance.initializeGame();
+        GameMaster.instance.initializeUI();
     }
 
     static get instance(): GameMaster { return GameMaster._intance; }
 
     private static _intance: GameMaster;
-
-// Initialization, UI
-
-    private initializeUI(): void {
-        this.gamePanel = document.getElementById("gameUI");
-
-        this.gameMasterPanel = document.createElement("div");
-        this.gamePanel.appendChild(this.gameMasterPanel);
-
-        this.playerPanels = document.createElement("div");
-        this.gamePanel.appendChild(this.playerPanels);
-
-        this.messagePanel = document.createElement("div");
-        this.gamePanel.appendChild(this.messagePanel);
-        this.messageOutput = document.createElement("ul");
-        this.messagePanel.appendChild(this.messageOutput);
-    }
-
-    private gamePanel: HTMLElement;
-    private gameMasterPanel: HTMLElement;
-    private playerPanels: HTMLElement;
-    private messagePanel: HTMLElement;
-    private messageOutput: HTMLElement;
 
 // Initialization, Game
 
@@ -62,14 +39,62 @@
         this.newCards.add(new MicroMovie());
 
         this.newBackerCards = new Deck();
-        this.newBackerCards.add(new Fatso1());
-        this.newBackerCards.add(new HotChick());
-        this.newBackerCards.add(new OrdinaryFolk());
+        for (let i = 2; i > 0; --i) { this.newBackerCards.add(new Fatso1()); }
+        for (let i = 2; i > 0; --i) { this.newBackerCards.add(new Fatso2()); }
+        for (let i = 2; i > 0; --i) { this.newBackerCards.add(new Fatso3()); }
+        for (let i = 9; i > 0; --i) { this.newBackerCards.add(new Groupie()); }
+        for (let i = 2; i > 0; --i) { this.newBackerCards.add(new HotChick()); }
+        for (let i = 2; i > 0; --i) { this.newBackerCards.add(new OnePercent()); }
+        for (let i = 5; i > 0; --i) { this.newBackerCards.add(new OrdinaryFolk()); }
 
-        this.players = [new Player("Player1"), new Player("Player2")];
+        this.players = [];
+        for (let i = 0; i < 2; ++i) { this.players.push(new Player(i, `Player${i}`)); }
     }
 
     private newCards: Deck;
     private newBackerCards: Deck;
     private players: Player[];
+
+// Initialization, UI
+
+    private initializeUI(): void {
+        this.gamePanel = document.getElementById("gameUI");
+
+        this.gameMasterPanel = document.createElement("div");
+        this.gamePanel.appendChild(this.gameMasterPanel);
+        let gameInfoPanel = document.createElement("div");
+        gameInfoPanel.appendChild(document.createTextNode("潛在投資人："));
+        this.gameMasterOutput = document.createElement("ul");
+        gameInfoPanel.appendChild(this.gameMasterOutput);
+        this.gameMasterPanel.appendChild(gameInfoPanel);
+
+        this.playerPanel = document.createElement("div");
+        this.gamePanel.appendChild(this.playerPanel);
+        this.playerOutputs = [];
+        for (let i = 0; i < this.players.length; ++i) {
+            let playerInfoPanel = document.createElement("div");
+            playerInfoPanel.appendChild(document.createTextNode(this.players[i].name))
+            let playerOutput = document.createElement("ul");
+            playerInfoPanel.appendChild(playerOutput);
+            this.playerOutputs.push(playerOutput);
+            this.playerPanel.appendChild(playerInfoPanel);
+        }
+
+        this.messagePanel = document.createElement("div");
+        this.gamePanel.appendChild(this.messagePanel);
+        this.messagePanel.appendChild(document.createTextNode("系統訊息："));
+        this.messageOutput = document.createElement("ul");
+        this.messagePanel.appendChild(this.messageOutput);
+    }
+
+    private gamePanel: HTMLElement;
+    
+    private gameMasterPanel: HTMLElement;
+    private gameMasterOutput: HTMLElement;
+    
+    private playerPanel: HTMLElement;
+    private playerOutputs: HTMLElement[];
+    
+    private messagePanel: HTMLElement;
+    private messageOutput: HTMLElement;
 }
