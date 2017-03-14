@@ -105,7 +105,7 @@ var GameMaster = (function () {
             this.addToNewBackerCards(new OrdinaryFolk());
         }
         this.players = [];
-        for (var i = 0; i < 2; ++i) {
+        for (var i = 0; i < 1; ++i) {
             this.players.push(new Player(i, "\u73A9\u5BB6" + i));
         }
         this.availableBackerCards = new Deck();
@@ -137,8 +137,33 @@ var GameMaster = (function () {
         for (var _i = 0, _a = this.availableBackerCards.cards; _i < _a.length; _i++) {
             var card = _a[_i];
             var cardNode = document.createElement("li");
-            cardNode.textContent = card.name;
+            cardNode.style.fontFamily = "monospace";
+            var savingThrowString = "";
+            for (var _b = 0, _c = card.savingThrows; _b < _c.length; _b++) {
+                var df = _c[_b];
+                savingThrowString += this.getDiceFace(df);
+            }
+            var cardEntry = "\u3010" + card.name + "\u3011 " + savingThrowString + " [\u73FE\u91D1+\uFF04" + card.fund + "\u842C] [\u9032\u5EA6+" + card.progress + "]";
+            cardNode.textContent = cardEntry;
             this.gameMasterOutput.appendChild(cardNode);
+        }
+    };
+    GameMaster.prototype.getDiceFace = function (diceFace) {
+        switch (diceFace) {
+            case DiceFace.D1:
+                return "\u2680";
+            case DiceFace.D2:
+                return "\u2681";
+            case DiceFace.D3:
+                return "\u2682";
+            case DiceFace.D4:
+                return "\u2683";
+            case DiceFace.D5:
+                return "\u2684";
+            case DiceFace.D6:
+                return "\u2685";
+            default:
+                throw new Error("unknown diceFace: " + diceFace);
         }
     };
     // Initialization, System UI
@@ -205,9 +230,11 @@ var ActionCard = (function (_super) {
 /// <reference path="Card.ts" />
 var BackerCard = (function (_super) {
     __extends(BackerCard, _super);
-    function BackerCard(name, description, savingThrows) {
+    function BackerCard(name, description, savingThrows, fund, progress) {
         var _this = _super.call(this, name, description) || this;
         _this.savingThrows = savingThrows;
+        _this.fund = fund;
+        _this.progress = progress;
         return _this;
     }
     return BackerCard;
@@ -264,7 +291,7 @@ var Fatso1 = (function (_super) {
             DiceFace.D3,
             DiceFace.D4,
             DiceFace.D5,
-        ]) || this;
+        ], 300, 3) || this;
     }
     return Fatso1;
 }(BackerCard));
@@ -277,7 +304,7 @@ var Fatso2 = (function (_super) {
             DiceFace.D3,
             DiceFace.D4,
             DiceFace.D5,
-        ]) || this;
+        ], 50, 0) || this;
     }
     return Fatso2;
 }(BackerCard));
@@ -291,7 +318,7 @@ var Fatso3 = (function (_super) {
             DiceFace.D4,
             DiceFace.D5,
             DiceFace.D6,
-        ]) || this;
+        ], 300, 2) || this;
     }
     return Fatso3;
 }(BackerCard));
@@ -304,7 +331,7 @@ var Groupie = (function (_super) {
             DiceFace.D3,
             DiceFace.D4,
             DiceFace.D5,
-        ]) || this;
+        ], 50, 0) || this;
     }
     return Groupie;
 }(BackerCard));
@@ -314,7 +341,7 @@ var HotChick = (function (_super) {
         return _super.call(this, "正妹", "聞起來香香der", [
             DiceFace.D1,
             DiceFace.D2,
-        ]) || this;
+        ], 100, 1) || this;
     }
     return HotChick;
 }(BackerCard));
@@ -323,7 +350,7 @@ var OnePercent = (function (_super) {
     function OnePercent() {
         return _super.call(this, "有錢人", "別讓有錢人不開心", [
             DiceFace.D1,
-        ]) || this;
+        ], 1500, 2) || this;
     }
     return OnePercent;
 }(BackerCard));
@@ -334,7 +361,7 @@ var OrdinaryFolk = (function (_super) {
             DiceFace.D1,
             DiceFace.D2,
             DiceFace.D3,
-        ]) || this;
+        ], 300, 1) || this;
     }
     return OrdinaryFolk;
 }(BackerCard));

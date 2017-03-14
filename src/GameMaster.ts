@@ -49,7 +49,7 @@
         for (let i = 5; i > 0; --i) { this.addToNewBackerCards(new OrdinaryFolk()); }
 
         this.players = [];
-        for (let i = 0; i < 2; ++i) { this.players.push(new Player(i, `玩家${i}`)); }
+        for (let i = 0; i < 1; ++i) { this.players.push(new Player(i, `玩家${i}`)); }
 
         this.availableBackerCards = new Deck();
         this.drawFromNewBackerCardsThenAddToAvailableBackerCards();
@@ -82,8 +82,33 @@
         }
         for (let card of this.availableBackerCards.cards) {
             let cardNode = document.createElement("li");
-            cardNode.textContent = card.name;
+            cardNode.style.fontFamily = "monospace";
+
+            let savingThrowString = "";
+            for(let df of (<BackerCard>card).savingThrows) { savingThrowString += this.getDiceFace(df); }
+
+            let cardEntry = `【${card.name}】 ${savingThrowString} [現金+＄${(<BackerCard>card).fund}萬] [進度+${(<BackerCard>card).progress}]`;
+            cardNode.textContent = cardEntry;
             this.gameMasterOutput.appendChild(cardNode);
+        }
+    }
+
+    private getDiceFace(diceFace: DiceFace): string {
+        switch (diceFace) {
+            case DiceFace.D1:
+            return "\u2680";
+            case DiceFace.D2:
+            return "\u2681";
+            case DiceFace.D3:
+            return "\u2682";
+            case DiceFace.D4:
+            return "\u2683";
+            case DiceFace.D5:
+            return "\u2684";
+            case DiceFace.D6:
+            return "\u2685";
+            default:
+            throw new Error("unknown diceFace: " + diceFace);
         }
     }
 
