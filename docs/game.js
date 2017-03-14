@@ -134,7 +134,7 @@ var GameMaster = (function () {
             this.WriteMessage("★☆★☆★☆★★☆★☆★☆★");
             this.WriteMessage("☆★☆★☆★☆☆★☆★☆★☆");
             this.WriteMessage("進度完成，遊戲結束");
-            this.WriteMessage("\u6700\u5F8C\u6210\u7E3E\uFF1A\u73FE\u91D1 " + this.players[0].fund + " \u842C\uFF0C\u9032\u5EA6 " + this.players[0].progress + "/{this.players[0].goal} = " + Math.round(this.players[0].progress * 100 / this.players[0].goal) + "%");
+            this.WriteMessage("\u6700\u5F8C\u6210\u7E3E\uFF1A\u73FE\u91D1 " + this.players[0].fund + " \u842C\uFF0C\u9032\u5EA6 " + this.players[0].progress + "/" + this.players[0].goal + " = " + Math.round(this.players[0].progress * 100 / this.players[0].goal) + "%");
         }
         else if (this.availableBackerCards.cardCount <= 0) {
             this.WriteMessage("╳✕╳✕╳✕╳");
@@ -142,7 +142,7 @@ var GameMaster = (function () {
             this.WriteMessage("╳✕╳✕╳✕╳");
             this.WriteMessage("✕╳✕╳✕╳✕");
             this.WriteMessage("萬人響應，零人到場，遊戲結束");
-            this.WriteMessage("\u6700\u5F8C\u6210\u7E3E\uFF1A\u73FE\u91D1 " + this.players[0].fund + " \u842C\uFF0C\u9032\u5EA6 " + this.players[0].progress + "/{this.players[0].goal} = " + Math.round(this.players[0].progress * 100 / this.players[0].goal) + "%");
+            this.WriteMessage("\u6700\u5F8C\u6210\u7E3E\uFF1A\u73FE\u91D1 " + this.players[0].fund + " \u842C\uFF0C\u9032\u5EA6 " + this.players[0].progress + "/" + this.players[0].goal + " = " + Math.round(this.players[0].progress * 100 / this.players[0].goal) + "%");
         }
     };
     GameMaster.prototype.listBackers = function () {
