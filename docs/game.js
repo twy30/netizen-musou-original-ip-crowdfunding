@@ -113,7 +113,7 @@ var GameMaster = (function () {
     };
     GameMaster.prototype.addToNewBackerCards = function (card) {
         this.newBackerCards.add(card);
-        this.WriteMessage("\uFF27\uFF2D\u5C07 " + card.name + " \u52A0\u5165\u6295\u8CC7\u4EBA\u5361\u6C60\u3002");
+        this.WriteMessage("\uFF27\uFF2D\u7121\u4E2D\u751F\u6709\u8B8A\u51FA\u4E00\u5F35\u3010" + card.name + "\u3011\uFF0C\u52A0\u5165\u6F5B\u5728\u6295\u8CC7\u4EBA\u5361\u6C60\u3002");
     };
     GameMaster.prototype.drawFromNewBackerCardsThenAddToAvailableBackerCards = function () {
         var expectedAvailableBackerCardCount = 5;
@@ -124,8 +124,21 @@ var GameMaster = (function () {
             else {
                 var newCard = this.newBackerCards.draw();
                 this.availableBackerCards.add(newCard);
-                this.WriteMessage("\uFF27\uFF2D\u5F9E\u6295\u8CC7\u4EBA\u5361\u6C60\u4E2D\u62BD\u51FA " + newCard.name + " \u52A0\u5165\u6F5B\u5728\u6295\u8CC7\u4EBA\u5340\u3002");
+                this.WriteMessage("\uFF27\uFF2D\u5F9E\u6F5B\u5728\u6295\u8CC7\u4EBA\u5361\u6C60\u4E2D\u62BD\u51FA\u3010" + newCard.name + "\u3011\u52A0\u5165\u6295\u8CC7\u4EBA\u5340\u3002");
             }
+        }
+        this.listBackers();
+    };
+    GameMaster.prototype.listBackers = function () {
+        this.gameMasterPanel.firstChild.firstChild.textContent = "\u76EE\u524D\u6709 " + this.availableBackerCards.cardCount + " \u4F4D\u6295\u8CC7\u4EBA\uFF08\u6F5B\u5728\u6295\u8CC7\u4EBA\u5361\u6C60\u4E2D\u9084\u5269 " + this.newBackerCards.cardCount + " \u4EBA)\u3002";
+        while (this.gameMasterOutput.firstChild !== null) {
+            this.gameMasterOutput.removeChild(this.gameMasterOutput.firstChild);
+        }
+        for (var _i = 0, _a = this.availableBackerCards.cards; _i < _a.length; _i++) {
+            var card = _a[_i];
+            var cardNode = document.createElement("li");
+            cardNode.textContent = card.name;
+            this.gameMasterOutput.appendChild(cardNode);
         }
     };
     // Initialization, System UI

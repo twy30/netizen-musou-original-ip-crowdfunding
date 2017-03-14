@@ -57,7 +57,7 @@
 
     private addToNewBackerCards(card: Card): void {
         this.newBackerCards.add(card);
-        this.WriteMessage(`ＧＭ將 ${card.name} 加入投資人卡池。`);
+        this.WriteMessage(`ＧＭ無中生有變出一張【${card.name}】，加入潛在投資人卡池。`);
     }
 
     private drawFromNewBackerCardsThenAddToAvailableBackerCards(): void {
@@ -68,8 +68,22 @@
             } else {
                 let newCard = this.newBackerCards.draw();
                 this.availableBackerCards.add(newCard);
-                this.WriteMessage(`ＧＭ從投資人卡池中抽出 ${newCard.name} 加入潛在投資人區。`);
+                this.WriteMessage(`ＧＭ從潛在投資人卡池中抽出【${newCard.name}】加入投資人區。`);
             }
+        }
+
+        this.listBackers();
+    }
+
+    private listBackers(): void {
+        this.gameMasterPanel.firstChild.firstChild.textContent = `目前有 ${this.availableBackerCards.cardCount} 位投資人（潛在投資人卡池中還剩 ${this.newBackerCards.cardCount} 人)。`;
+        while (this.gameMasterOutput.firstChild !== null) {
+            this.gameMasterOutput.removeChild(this.gameMasterOutput.firstChild);
+        }
+        for (let card of this.availableBackerCards.cards) {
+            let cardNode = document.createElement("li");
+            cardNode.textContent = card.name;
+            this.gameMasterOutput.appendChild(cardNode);
         }
     }
 

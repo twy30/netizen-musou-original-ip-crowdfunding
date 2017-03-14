@@ -19,5 +19,5 @@
 
     get cardCount(): number { return this.cards.length; }
 
-    private cards: Card[];
+    cards: Card[];
 }
