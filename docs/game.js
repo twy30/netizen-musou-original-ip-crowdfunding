@@ -16,15 +16,24 @@ var Deck = (function () {
         this.cards.push(card);
     };
     Deck.prototype.draw = function () {
-        if (this.isEmpty()) {
+        if (this.isEmpty) {
             throw new Error("drawing from an empty deck");
         }
-        var index = this.cards.length * Math.random();
+        var index = Math.floor(this.cards.length * Math.random());
         var ret = this.cards[index];
         this.cards.splice(index, 1);
         return ret;
     };
-    Deck.prototype.isEmpty = function () { return this.cards.length <= 0; };
+    Object.defineProperty(Deck.prototype, "isEmpty", {
+        get: function () { return this.cards.length <= 0; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Deck.prototype, "cardCount", {
+        get: function () { return this.cards.length; },
+        enumerable: true,
+        configurable: true
+    });
     return Deck;
 }());
 var DiceFace;
@@ -99,10 +108,25 @@ var GameMaster = (function () {
         for (var i = 0; i < 2; ++i) {
             this.players.push(new Player(i, "\u73A9\u5BB6" + i));
         }
+        this.availableBackerCards = new Deck();
+        this.drawFromNewBackerCardsThenAddToAvailableBackerCards();
     };
     GameMaster.prototype.addToNewBackerCards = function (card) {
-        this.WriteMessage("\uFF27\uFF2D\u5C07 " + card.name + " \u52A0\u5165\u5361\u6C60\u3002");
         this.newBackerCards.add(card);
+        this.WriteMessage("\uFF27\uFF2D\u5C07 " + card.name + " \u52A0\u5165\u6295\u8CC7\u4EBA\u5361\u6C60\u3002");
+    };
+    GameMaster.prototype.drawFromNewBackerCardsThenAddToAvailableBackerCards = function () {
+        var expectedAvailableBackerCardCount = 5;
+        while (this.availableBackerCards.cardCount < expectedAvailableBackerCardCount) {
+            if (this.newBackerCards.isEmpty) {
+                break;
+            }
+            else {
+                var newCard = this.newBackerCards.draw();
+                this.availableBackerCards.add(newCard);
+                this.WriteMessage("\uFF27\uFF2D\u5F9E\u6295\u8CC7\u4EBA\u5361\u6C60\u4E2D\u62BD\u51FA " + newCard.name + " \u52A0\u5165\u6F5B\u5728\u6295\u8CC7\u4EBA\u5340\u3002");
+            }
+        }
     };
     // Initialization, System UI
     GameMaster.prototype.initializeSystemUI = function () {

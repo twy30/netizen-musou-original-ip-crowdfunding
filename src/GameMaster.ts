@@ -50,11 +50,27 @@
 
         this.players = [];
         for (let i = 0; i < 2; ++i) { this.players.push(new Player(i, `玩家${i}`)); }
+
+        this.availableBackerCards = new Deck();
+        this.drawFromNewBackerCardsThenAddToAvailableBackerCards();
     }
 
     private addToNewBackerCards(card: Card): void {
-        this.WriteMessage(`ＧＭ將 ${card.name} 加入卡池。`);
         this.newBackerCards.add(card);
+        this.WriteMessage(`ＧＭ將 ${card.name} 加入投資人卡池。`);
+    }
+
+    private drawFromNewBackerCardsThenAddToAvailableBackerCards(): void {
+        let expectedAvailableBackerCardCount = 5;
+        while (this.availableBackerCards.cardCount < expectedAvailableBackerCardCount) {
+            if (this.newBackerCards.isEmpty) {
+                break;
+            } else {
+                let newCard = this.newBackerCards.draw();
+                this.availableBackerCards.add(newCard);
+                this.WriteMessage(`ＧＭ從投資人卡池中抽出 ${newCard.name} 加入潛在投資人區。`);
+            }
+        }
     }
 
     private newCards: Deck;
