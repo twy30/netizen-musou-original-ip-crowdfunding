@@ -15,59 +15,86 @@ var Deck = (function () {
     Deck.prototype.add = function (card) {
         this.cards.push(card);
     };
+    Deck.prototype.draw = function () {
+        if (this.isEmpty()) {
+            throw new Error("drawing from an empty deck");
+        }
+        var index = this.cards.length * Math.random();
+        var ret = this.cards[index];
+        this.cards.splice(index, 1);
+        return ret;
+    };
+    Deck.prototype.isEmpty = function () { return this.cards.length <= 0; };
     return Deck;
 }());
+var DiceFace;
+(function (DiceFace) {
+    DiceFace[DiceFace["D1"] = 1] = "D1";
+    DiceFace[DiceFace["D2"] = 2] = "D2";
+    DiceFace[DiceFace["D3"] = 3] = "D3";
+    DiceFace[DiceFace["D4"] = 4] = "D4";
+    DiceFace[DiceFace["D5"] = 5] = "D5";
+    DiceFace[DiceFace["D6"] = 6] = "D6";
+})(DiceFace || (DiceFace = {}));
 var GameMaster = (function () {
     function GameMaster() {
     }
-    // System Methods
-    GameMaster.WriteMessage = function (messageText) {
+    // Public Methods
+    GameMaster.prototype.WriteMessage = function (messageText, sourceName) {
         var newMessage = document.createElement("li");
-        newMessage.innerText = messageText;
-        var existingMessages = GameMaster.messageOutput.childNodes;
+        newMessage.style.fontFamily = "monospace";
+        newMessage.innerText = "[" + new Date().toISOString() + "][" + sourceName + "]: " + messageText;
+        var existingMessages = this.messageOutput.childNodes;
         if (existingMessages.length <= 0) {
-            GameMaster.messageOutput.appendChild(newMessage);
+            this.messageOutput.appendChild(newMessage);
         }
         else {
-            GameMaster.messageOutput.insertBefore(newMessage, existingMessages[0]);
+            this.messageOutput.insertBefore(newMessage, existingMessages[0]);
         }
     };
     // Initialization
     GameMaster.start = function () {
-        GameMaster.initializeUI();
-        GameMaster.initializeGame();
+        GameMaster._intance = new GameMaster();
+        GameMaster.instance.initializeUI();
+        GameMaster.instance.initializeGame();
     };
-    // Initialization::UI
-    GameMaster.initializeUI = function () {
-        GameMaster.gamePanel = document.getElementById("gameUI");
-        GameMaster.gameMasterPanel = document.createElement("div");
-        GameMaster.gamePanel.appendChild(GameMaster.gameMasterPanel);
-        GameMaster.playerPanels = document.createElement("div");
-        GameMaster.gamePanel.appendChild(GameMaster.playerPanels);
-        GameMaster.messagePanel = document.createElement("div");
-        GameMaster.gamePanel.appendChild(GameMaster.messagePanel);
-        GameMaster.messageOutput = document.createElement("ul");
-        GameMaster.messagePanel.appendChild(GameMaster.messageOutput);
+    Object.defineProperty(GameMaster, "instance", {
+        get: function () { return GameMaster._intance; },
+        enumerable: true,
+        configurable: true
+    });
+    // Initialization, UI
+    GameMaster.prototype.initializeUI = function () {
+        this.gamePanel = document.getElementById("gameUI");
+        this.gameMasterPanel = document.createElement("div");
+        this.gamePanel.appendChild(this.gameMasterPanel);
+        this.playerPanels = document.createElement("div");
+        this.gamePanel.appendChild(this.playerPanels);
+        this.messagePanel = document.createElement("div");
+        this.gamePanel.appendChild(this.messagePanel);
+        this.messageOutput = document.createElement("ul");
+        this.messagePanel.appendChild(this.messageOutput);
     };
-    // Initialization::Game
-    GameMaster.initializeGame = function () {
-        GameMaster.unusedActionCards = new Deck();
-        GameMaster.unusedActionCards.add(new CertainReasons());
-        GameMaster.unusedActionCards.add(new ExpandedScope());
-        GameMaster.unusedActionCards.add(new LetterOfLaw());
-        GameMaster.unusedBackerCards = new Deck();
-        GameMaster.unusedBackerCards.add(new Fatso1());
-        GameMaster.unusedBackerCards.add(new HotChick());
-        GameMaster.unusedBackerCards.add(new OrdinaryFolk());
-        GameMaster.unusedItemCards = new Deck();
-        GameMaster.unusedItemCards.add(new Encyclopedia());
-        GameMaster.unusedItemCards.add(new EyeDrop());
-        GameMaster.unusedItemCards.add(new MicroMovie());
+    // Initialization, Game
+    GameMaster.prototype.initializeGame = function () {
+        this.newCards = new Deck();
+        this.newCards.add(new CertainReasons());
+        this.newCards.add(new ExpandedScope());
+        this.newCards.add(new LetterOfLaw());
+        this.newCards.add(new Encyclopedia());
+        this.newCards.add(new EyeDrop());
+        this.newCards.add(new MicroMovie());
+        this.newBackerCards = new Deck();
+        this.newBackerCards.add(new Fatso1());
+        this.newBackerCards.add(new HotChick());
+        this.newBackerCards.add(new OrdinaryFolk());
+        this.players = [new Player("Player1"), new Player("Player2")];
     };
     return GameMaster;
 }());
 var Player = (function () {
-    function Player() {
+    function Player(name) {
+        this.name = name;
         this.fund = 0;
         this.progress = 0;
         this.goal = 10;
@@ -102,15 +129,6 @@ var BackerCard = (function (_super) {
     }
     return BackerCard;
 }(Card));
-var DiceFace;
-(function (DiceFace) {
-    DiceFace[DiceFace["D1"] = 1] = "D1";
-    DiceFace[DiceFace["D2"] = 2] = "D2";
-    DiceFace[DiceFace["D3"] = 3] = "D3";
-    DiceFace[DiceFace["D4"] = 4] = "D4";
-    DiceFace[DiceFace["D5"] = 5] = "D5";
-    DiceFace[DiceFace["D6"] = 6] = "D6";
-})(DiceFace || (DiceFace = {}));
 var ItemCard = (function (_super) {
     __extends(ItemCard, _super);
     function ItemCard(name, description, cost) {
