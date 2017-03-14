@@ -106,7 +106,7 @@ var GameMaster = (function () {
         }
         this.players = [];
         for (var i = 0; i < 1; ++i) {
-            this.players.push(new Player(i, "\u73A9\u5BB6" + i));
+            this.players.push(new Player(i, "\u73A9\u5BB6#" + i));
         }
         this.availableBackerCards = new Deck();
         this.drawFromNewBackerCardsThenAddToAvailableBackerCards();
@@ -129,20 +129,24 @@ var GameMaster = (function () {
         }
         this.listBackers();
         if (this.players[0].progress >= this.players[0].goal) {
+            this.WriteMessage("");
             this.WriteMessage("★☆★☆★☆★★☆★☆★☆★");
             this.WriteMessage("☆★☆★☆★☆☆★☆★☆★☆");
             this.WriteMessage("★☆★☆★☆★★☆★☆★☆★");
             this.WriteMessage("☆★☆★☆★☆☆★☆★☆★☆");
             this.WriteMessage("進度完成，遊戲結束");
             this.WriteMessage("\u6700\u5F8C\u6210\u7E3E\uFF1A\u73FE\u91D1 " + this.players[0].fund + " \u842C\uFF0C\u9032\u5EA6 " + this.players[0].progress + "/" + this.players[0].goal + " = " + Math.round(this.players[0].progress * 100 / this.players[0].goal) + "%");
+            this.listBackers2();
         }
         else if (this.availableBackerCards.cardCount <= 0) {
+            this.WriteMessage("");
             this.WriteMessage("╳✕╳✕╳✕╳");
             this.WriteMessage("✕╳✕╳✕╳✕");
             this.WriteMessage("╳✕╳✕╳✕╳");
             this.WriteMessage("✕╳✕╳✕╳✕");
             this.WriteMessage("萬人響應，零人到場，遊戲結束");
             this.WriteMessage("\u6700\u5F8C\u6210\u7E3E\uFF1A\u73FE\u91D1 " + this.players[0].fund + " \u842C\uFF0C\u9032\u5EA6 " + this.players[0].progress + "/" + this.players[0].goal + " = " + Math.round(this.players[0].progress * 100 / this.players[0].goal) + "%");
+            this.listBackers2();
         }
     };
     GameMaster.prototype.listBackers = function () {
@@ -167,6 +171,25 @@ var GameMaster = (function () {
         for (var _i = 0, _a = this.availableBackerCards.cards; _i < _a.length; _i++) {
             var card = _a[_i];
             _loop_1(card);
+        }
+    };
+    GameMaster.prototype.listBackers2 = function () {
+        this.gameMasterPanel.firstChild.firstChild.textContent = "\u76EE\u524D\u6709 " + this.availableBackerCards.cardCount + " \u4F4D\u6295\u8CC7\u4EBA\uFF08\u6F5B\u5728\u6295\u8CC7\u4EBA\u5361\u6C60\u4E2D\u9084\u5269 " + this.newBackerCards.cardCount + " \u4EBA)\u3002";
+        while (this.gameMasterOutput.firstChild !== null) {
+            this.gameMasterOutput.removeChild(this.gameMasterOutput.firstChild);
+        }
+        for (var _i = 0, _a = this.availableBackerCards.cards; _i < _a.length; _i++) {
+            var card = _a[_i];
+            var cardNode = document.createElement("li");
+            cardNode.style.fontFamily = "monospace";
+            var savingThrowString = "";
+            for (var _b = 0, _c = card.savingThrows; _b < _c.length; _b++) {
+                var df = _c[_b];
+                savingThrowString += this.getDiceFace(df);
+            }
+            var cardEntry = "\u3010" + card.name + "\uFF1B" + card.description + "\u3011 " + savingThrowString + " [\u73FE\u91D1+\uFF04" + card.fund + "\u842C] [\u9032\u5EA6+" + card.progress + "]";
+            cardNode.textContent = cardEntry;
+            this.gameMasterOutput.appendChild(cardNode);
         }
     };
     GameMaster.prototype.pitch = function (card) {
@@ -207,7 +230,7 @@ var GameMaster = (function () {
                 var df = _c[_b];
                 savingThrowString += this.getDiceFace(df);
             }
-            var cardEntry = "\u3010" + card.name + "\uFF1B" + card.description + "\u3011 " + savingThrowString + " [\u73FE\u91D1+\uFF04" + card.fund + "\u842C] [\u9032\u5EA6+" + card.progress + "]";
+            var cardEntry = "{\u52DF\u6B3E\u6210\u529F} \u3010" + card.name + "\uFF1B" + card.description + "\u3011 " + savingThrowString + " [\u73FE\u91D1+\uFF04" + card.fund + "\u842C] [\u9032\u5EA6+" + card.progress + "]";
             cardNode.textContent = cardEntry;
             this.playerOutputs[0].appendChild(cardNode);
             playerFund += card.fund;
@@ -215,7 +238,7 @@ var GameMaster = (function () {
         }
         this.players[0].fund = playerFund;
         this.players[0].progress = playerProgress;
-        this.playerPanel.firstChild.firstChild.textContent = this.players[0].name + " \u76EE\u524D\u8CC7\u91D1 " + this.players[0].fund + " \u9032\u5EA6 " + this.players[0].progress + "/" + this.players[0].goal;
+        this.playerPanel.firstChild.firstChild.textContent = this.players[0].name + " \u76EE\u524D [\u8CC7\u91D1 " + this.players[0].fund + " \u842C] [\u9032\u5EA6 " + this.players[0].progress + "/" + this.players[0].goal + " ]";
     };
     GameMaster.prototype.getDiceFace = function (diceFace) {
         switch (diceFace) {
