@@ -53,7 +53,7 @@
 // Initialization, Game
 
     private initializeGame(): void {
-        this.newCards = new Deck<Card>();
+        this.newCards = new Deck();
         this.newCards.add(new CertainReasons());
         this.newCards.add(new ExpandedScope());
         this.newCards.add(new LetterOfLaw());
@@ -61,7 +61,7 @@
         this.newCards.add(new EyeDrop());
         this.newCards.add(new MicroMovie());
 
-        this.newBackerCards = new Deck<BackerCard>();
+        this.newBackerCards = new Deck();
         this.newBackerCards.add(new Fatso1());
         this.newBackerCards.add(new HotChick());
         this.newBackerCards.add(new OrdinaryFolk());
@@ -69,7 +69,7 @@
         this.players = [new Player("Player1"), new Player("Player2")];
     }
 
-    private newCards: Deck<Card>;
-    private newBackerCards: Deck<BackerCard>;
+    private newCards: Deck;
+    private newBackerCards: Deck;
     private players: Player[];
 }
